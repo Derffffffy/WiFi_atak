@@ -2,29 +2,29 @@ name: Build APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer cython
-          
-      - name: Setup Android SDK Licenses
+      - name: Setup SDK & Accept Licenses
         run: |
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          mkdir -p .buildozer/android/platform/android-sdk/licenses
-          echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > .buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          echo -e "\n84835b5470d061247071f8456f9167e45214cc6d" >> .buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          echo -e "\n504667f4c0de7af1a06de9f4b1727b84381393f9" >> .buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          
+          mkdir -p $HOME/android/sdk
+          cd $HOME/android/sdk
+          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
+          unzip commandlinetools-linux-10406996_latest.zip
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+          mv cmdline-tools/latest/cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+          export PATH=$PATH:$HOME/android/sdk/cmdline-tools/latest/bin
+          yes | sdkmanager --licenses
       - name: Build
         run: |
+          export PATH=$PATH:$HOME/android/sdk/cmdline-tools/latest/bin
           buildozer android debug
-          
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
