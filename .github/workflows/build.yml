@@ -14,16 +14,11 @@ jobs:
           
       - name: Build
         run: |
-          # Создаем структуру для SDK
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          
-          # Устанавливаем переменные окружения
-          export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/tools/bin
-          
-          # Принудительное принятие лицензий
-          # Это обходит ошибку 'Accept? (y/N)'
-          yes | sdkmanager --licenses || true
+          # Главный трюк: создаем структуру для лицензий Buildozer
+          mkdir -p .buildozer/android/platform/android-sdk/licenses
+          echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > .buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo -e "\n84835b5470d061247071f8456f9167e45214cc6d" >> .buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo -e "\n504667f4c0de7af1a06de9f4b1727b84381393f9" >> .buildozer/android/platform/android-sdk/licenses/android-sdk-license
           
           # Запуск сборки
           buildozer android debug
