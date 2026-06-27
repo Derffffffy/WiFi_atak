@@ -7,12 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: kivy/buildozer:latest
+      options: --user root
+    env:
+      BUILDOZER_ALLOW_ROOT: 1
     steps:
       - uses: actions/checkout@v4
 
       - name: Build with Buildozer
         run: |
-          # В контейнере kivy/buildozer уже всё настроено
           buildozer android debug
 
       - name: Upload APK
