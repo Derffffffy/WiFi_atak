@@ -5,12 +5,15 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - name: Build
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer cython
-          # Сборка без лишнего мусора
+      - name: Debug files
+        run: ls -la  # ЭТА КОМАНДА ПОКАЖЕТ, ЧТО ВИДИТ СЕРВЕР
+      - name: Build
+        run: |
           buildozer android debug
       - name: Upload
         uses: actions/upload-artifact@v4
