@@ -16,18 +16,18 @@ jobs:
 
       - name: Build
         env:
-          # Отключаем все проверки прав и лицензий
           BUILDOZER_ALLOW_ROOT: 1
         run: |
-          # Предварительное принятие лицензий
+          # Создаем директорию для лицензий и принимаем их принудительно
           mkdir -p ~/.android/licenses
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.android/licenses/android-sdk-license
           echo "84835b5470d061247071f8456f9167e45214cc6d" >> ~/.android/licenses/android-sdk-license
+          echo "504667f4c0de7af1a06de9f4b1727b84381393f9" >> ~/.android/licenses/android-sdk-license
           
-          # Запуск сборки
+          # Запуск
           buildozer android debug
 
-      - name: Upload
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: WiFiAtak-APK
