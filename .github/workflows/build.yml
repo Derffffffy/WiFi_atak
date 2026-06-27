@@ -10,10 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build with Buildozer
         run: |
-          # В этом контейнере всё уже установлено
-          # buildozer автоматически примет нужные лицензии
+          # В контейнере kivy/buildozer уже всё настроено
           buildozer android debug
 
       - name: Upload APK
