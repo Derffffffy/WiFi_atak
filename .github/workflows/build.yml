@@ -1,0 +1,15 @@
+name: Build APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ArtemSBulgakov/buildozer-action@v1
+        with:
+          buildozer_version: latest
+      - uses: actions/upload-artifact@v3
+        with:
+          name: WiFiAtak-APK
+          path: bin/*.apk
+          
