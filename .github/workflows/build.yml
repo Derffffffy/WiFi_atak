@@ -2,23 +2,22 @@ name: Build APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Принудительно используем старую версию, где архитектура сборки еще стабильна
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       
       - name: Install dependencies
         run: |
           sudo apt-get update
-          # Добавляем openjdk-17-jdk и другие нужные пакеты
+          # Устанавливаем минимально необходимый набор для сборки
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer cython
           
-      - name: Set JAVA_HOME
-        run: echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
-
       - name: Build with Buildozer
         run: |
-          # Прямой вызов сборки
+          # Очищаем PATH от возможных конфликтов
+          export PATH=$PATH:~/.local/bin
           buildozer -v android debug
           
       - name: Upload APK
