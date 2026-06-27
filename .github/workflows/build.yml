@@ -5,19 +5,28 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer cython
+          
+      - name: Manual SDK Setup
+        run: |
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip commandlinetools-linux-9477386_latest.zip -d $HOME/android-sdk/cmdline-tools
+          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+          
+          export PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin
+          yes | sdkmanager --licenses
+          
       - name: Build
         run: |
-          # Главная правка: создаем все нужные папки заранее
-          mkdir -p .buildozer/android/platform/android-sdk/licenses
+          export PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin
+          buildozer android debug
           
-          # Запуск сборки
-          # yes | sdkmanager --licenses перехватывает все запросы подтверждения
-          buildozer android debug || (yes | sdkmanager --licenses && buildozer android debug)
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
