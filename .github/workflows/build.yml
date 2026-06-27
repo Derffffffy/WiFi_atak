@@ -14,18 +14,23 @@ jobs:
           
       - name: Build
         run: |
-          # Принудительное принятие лицензий
+          # Создаем структуру для SDK
           mkdir -p ~/.android
           touch ~/.android/repositories.cfg
+          
+          # Устанавливаем переменные окружения
           export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/tools/bin
           
-          # Сборка
+          # Принудительное принятие лицензий
+          # Это обходит ошибку 'Accept? (y/N)'
+          yes | sdkmanager --licenses || true
+          
+          # Запуск сборки
           buildozer android debug
           
-      - name: Upload
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: WiFiAtak-APK
           path: bin/*.apk
-          if-no-files-found: error
           
