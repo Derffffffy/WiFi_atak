@@ -6,25 +6,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install dependencies
+      - name: Build
         run: |
+          # Устанавливаем только самое необходимое
           sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+          sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer cython
           
-      - name: Build with Buildozer
-        run: |
-          buildozer -v android debug
+          # Устанавливаем переменные, чтобы не использовать лишнюю память
+          export BUILDOZER_NO_COLORS=1
+          export P4A_DEBUG=1
           
-      - name: Debug and Find APK
-        run: |
-          echo "Ищем готовый APK..."
-          find . -name "*.apk"
-          
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: WiFiAtak-APK
-          path: bin/*.apk
-          if-no-files-found: warn
+          # Запускаем сборку без интерактивных фишек
+          buildozer android debug
           
