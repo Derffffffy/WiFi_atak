@@ -1,35 +1,20 @@
-name: Build APK
-on: [push]
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
-          pip3 install --user --upgrade buildozer cython
-          
-      - name: Manual SDK Setup
-        run: |
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools-linux-9477386_latest.zip -d $HOME/android-sdk/cmdline-tools
-          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-          
-          export PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin
-          yes | sdkmanager --licenses
-          
       - name: Build
         run: |
-          export PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin
-          buildozer android debug
+          # Создаем директорию для лицензий
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
           
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: WiFiAtak-APK
-          path: bin/*.apk
+          # Устанавливаем переменные окружения для SDK
+          export ANDROID_HOME=$HOME/.android/sdk
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+          
+          # ПРИНУДИТЕЛЬНОЕ ПРИНЯТИЕ ЛИЦЕНЗИЙ
+          # Команда 'yes' бесконечно отправляет 'y' в sdkmanager
+          mkdir -p $HOME/.android/sdk/licenses
+          echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $HOME/.android/sdk/licenses/android-sdk-license
+          echo "84835b5470d061247071f8456f9167e45214cc6d" >> $HOME/.android/sdk/licenses/android-sdk-license
+          echo "504667f4c0de7af1a06de9f4b1727b84381393f9" >> $HOME/.android/sdk/licenses/android-sdk-license
+          
+          # Запуск сборки
+          buildozer android debug
           
