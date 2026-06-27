@@ -6,12 +6,12 @@ from kivy.core.window import Window
 from kivy.animation import Animation
 from kivy.utils import get_color_from_hex
 
-# Цветовая палитра "Cyber VPN"
 COLORS = {
     'bg': get_color_from_hex("#121212"),
     'accent': get_color_from_hex("#00E676"),
     'danger': get_color_from_hex("#FF5252"),
-    'text': get_color_from_hex("#FFFFFF")
+    'text': get_color_from_hex("#FFFFFF"),
+    'footer': get_color_from_hex("#666666")
 }
 
 class VPNApp(BoxLayout):
@@ -19,17 +19,22 @@ class VPNApp(BoxLayout):
         super().__init__(orientation='vertical', padding=30, spacing=20, **kwargs)
         Window.clearcolor = COLORS['bg']
         
-        self.add_widget(Label(text="CYBER SHIELD", font_size='32sp', color=COLORS['accent'], bold=True))
+        # Заголовок
+        self.add_widget(Label(text="WiFi Atak", font_size='32sp', color=COLORS['accent'], bold=True))
         
+        # Статус
         self.status = Label(text="Статус: ОТКЛЮЧЕНО", font_size='18sp', color=COLORS['text'])
         self.add_widget(self.status)
         
+        # Кнопка
         self.btn = Button(text="ПОДКЛЮЧИТЬ", background_normal='', background_color=COLORS['accent'], size_hint=(1, 0.2))
         self.btn.bind(on_press=self.animate_btn)
         self.add_widget(self.btn)
+        
+        # Подпись автора
+        self.add_widget(Label(text="arkhip|32", font_size='12sp', color=COLORS['footer'], size_hint=(1, 0.1)))
 
     def animate_btn(self, instance):
-        # Эффект нажатия
         anim = Animation(size=(self.btn.width * 0.95, self.btn.height * 0.95), duration=0.1) + \
                Animation(size=(self.btn.width, self.btn.height), duration=0.1)
         anim.start(self.btn)
@@ -49,4 +54,4 @@ class CyberApp(App):
 
 if __name__ == '__main__':
     CyberApp().run()
-
+    
