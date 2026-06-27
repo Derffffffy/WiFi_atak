@@ -10,6 +10,9 @@ android.archs = armeabi-v7a
 android.permissions = INTERNET,ACCESS_WIFI_STATE,CHANGE_WIFI_STATE,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION
 android.api = 33
 android.minapi = 21
+# Фиксируем версии для стабильности
+android.sdk = 33
+android.ndk = 25b
 
 [buildozer]
 log_level = 2
