@@ -5,18 +5,16 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      
       - name: Build
         run: |
-          # Устанавливаем только самое необходимое
           sudo apt-get update
           sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer cython
-          
-          # Устанавливаем переменные, чтобы не использовать лишнюю память
-          export BUILDOZER_NO_COLORS=1
-          export P4A_DEBUG=1
-          
-          # Запускаем сборку без интерактивных фишек
+          # Сборка без лишнего мусора
           buildozer android debug
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: WiFiAtak-APK
+          path: bin/*.apk
           
