@@ -5,19 +5,29 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: kivy/buildozer:latest
-      options: --user root
-    env:
-      BUILDOZER_ALLOW_ROOT: 1
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with Buildozer
+      - name: Install dependencies
         run: |
+          sudo apt update
+          sudo apt install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+          pip3 install --upgrade buildozer cython
+
+      - name: Build
+        env:
+          # Отключаем все проверки прав и лицензий
+          BUILDOZER_ALLOW_ROOT: 1
+        run: |
+          # Предварительное принятие лицензий
+          mkdir -p ~/.android/licenses
+          echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.android/licenses/android-sdk-license
+          echo "84835b5470d061247071f8456f9167e45214cc6d" >> ~/.android/licenses/android-sdk-license
+          
+          # Запуск сборки
           buildozer android debug
 
-      - name: Upload APK
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: WiFiAtak-APK
