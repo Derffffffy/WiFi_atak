@@ -2,7 +2,7 @@ name: Build APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -10,21 +10,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer cython
-      - name: Setup SDK & Accept Licenses
-        run: |
-          mkdir -p $HOME/android/sdk
-          cd $HOME/android/sdk
-          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
-          unzip commandlinetools-linux-10406996_latest.zip
-          mkdir -p cmdline-tools/latest
-          mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
-          mv cmdline-tools/latest/cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
-          export PATH=$PATH:$HOME/android/sdk/cmdline-tools/latest/bin
-          yes | sdkmanager --licenses
       - name: Build
         run: |
-          export PATH=$PATH:$HOME/android/sdk/cmdline-tools/latest/bin
-          buildozer android debug
+          # Главная правка: создаем все нужные папки заранее
+          mkdir -p .buildozer/android/platform/android-sdk/licenses
+          
+          # Запуск сборки
+          # yes | sdkmanager --licenses перехватывает все запросы подтверждения
+          buildozer android debug || (yes | sdkmanager --licenses && buildozer android debug)
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
