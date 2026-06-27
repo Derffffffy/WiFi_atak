@@ -5,18 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip
-          pip3 install --user --upgrade buildozer cython==0.29.33
-
+          pip3 install --user --upgrade buildozer cython
       - name: Build with Buildozer
         run: |
-          # Используем флаг -v для детального лога
+          # Указываем пути к системному SDK и NDK, чтобы Buildozer не пытался их качать
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
           buildozer -v android debug
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
