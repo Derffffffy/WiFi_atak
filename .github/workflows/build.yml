@@ -1,5 +1,7 @@
 name: Build APK
+
 on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -7,11 +9,14 @@ jobs:
       image: kivy/buildozer:latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Build
         run: |
-          # В этом контейнере ВСЁ уже установлено и лицензии ПРИНЯТЫ
+          # В этом контейнере всё уже установлено
+          # buildozer автоматически примет нужные лицензии
           buildozer android debug
-      - name: Upload
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: WiFiAtak-APK
